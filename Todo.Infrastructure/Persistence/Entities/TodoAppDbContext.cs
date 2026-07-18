@@ -14,4 +14,46 @@ public class TodoAppDbContext : DbContext
     public DbSet<Comment> Comments { get; set; }
     public DbSet<ActivityLog> ActivityLogs { get; set; }
     
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(TodoAppDbContext).Assembly);
+
+        modelBuilder.Entity<TodoList>()
+            .HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<TodoItem>()
+            .HasOne(x => x.TodoList)
+            .WithMany(x => x.TodoItems)
+            .HasForeignKey(x => x.TodoListId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Comment>()
+            .HasOne(x => x.TodoItem)
+            .WithMany(x => x.Comments)
+            .HasForeignKey(x => x.TodoItemId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Comment>()
+            .HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<TodoItemTag>()
+            .HasOne(x => x.TodoItem)
+            .WithMany(x => x.TodoItemTags)
+            .HasForeignKey(x => x.TodoItemId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<TodoItemTag>()
+            .HasOne(x => x.Tag)
+            .WithMany(x => x.TodoItemTags)
+            .HasForeignKey(x => x.TagId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 }
