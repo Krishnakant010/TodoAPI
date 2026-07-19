@@ -8,6 +8,6 @@ public class UserMappingExtension :Profile
 {
     public UserMappingExtension()
     {
-        CreateMap<User, UserDomain>();
+        CreateMap<User, UserDomain>().ReverseMap();
     }
 }
